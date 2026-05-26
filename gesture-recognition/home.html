@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="dark light">
+  <title>Gesture Recognition System</title>
+  <script>
+    // Immediately apply dark mode if saved in localStorage or based on system preference
+    (() => {
+      const savedSettings = JSON.parse(localStorage.getItem('settings') || '{}');
+      if (savedSettings.hasOwnProperty('darkMode')) {
+        if (savedSettings.darkMode) {
+          document.documentElement.classList.add('dark-mode');
+          document.body.classList.add('dark-mode');
+        }
+      } else {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark-mode');
+          document.body.classList.add('dark-mode');
+        }
+      }
+    })();
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body, html {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
+      height: 100%;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .menu-icon {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 30px;
+      color: white;
+      background-color: #2f4f4f;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .sidebar {
+      height: 100vh;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      background-color: #2f4f4f;
+      padding: 2rem 1rem;
+      transition: left 0.3s ease-in-out;
+      z-index: 1002;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar.open {
+      left: 0;
+    }
+    .sidebar .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    .sidebar a:hover {
+      color: #00b3b3;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1001;
+      transition: width 0.3s ease-in-out;
+      overflow: hidden;
+    }
+    .overlay.show {
+      width: 100vw;
+    }
+    .main-content {
+      padding: 6rem 2rem;
+      text-align: center;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    header {
+      background: linear-gradient(135deg, #6fa3f9, #6a5acd);
+      color: white;
+      padding: 6rem 2rem 3rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 1.2rem;
+      font-weight: 600;
+    }
+    header p {
+      font-size: 1.2rem;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+    button {
+      padding: 0.8rem 2rem;
+      font-size: 1.2rem;
+      background-color: #ffffff;
+      color: #6fa3f9;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    button:hover {
+      background-color: #00b3b3;
+      color: white;
+    }
+    .info-section {
+      padding: 4rem 2rem;
+      background-color: #f8f9fa;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .info-section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #2f4f4f;
+    }
+    .info-section p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #555;
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+      header p {
+        font-size: 1rem;
+      }
+      .info-section h2 {
+        font-size: 2rem;
+      }
+      .info-section p {
+        font-size: 1rem;
+      }
+      button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+      }
+    }
+    /* Dark Mode Styles */
+    body.dark-mode, html.dark-mode {
+      background: #121212;
+      color: #eee;
+    }
+    body.dark-mode header {
+      background: linear-gradient(135deg, #333, #555);
+      color: #eee;
+    }
+    body.dark-mode header p {
+      color: #ccc;
+    }
+    body.dark-mode .sidebar {
+      background-color: #222;
+    }
+    body.dark-mode .sidebar a {
+      color: #ccc;
+    }
+    body.dark-mode .sidebar a:hover {
+      color: #00e5e5;
+    }
+    body.dark-mode .menu-icon {
+      background-color: #444;
+      color: #eee;
+    }
+    body.dark-mode .main-content {
+      background-color: #121212;
+      color: #eee;
+    }
+    body.dark-mode .info-section {
+      background-color: #1e1e1e;
+      color: #ccc;
+    }
+    body.dark-mode .info-section h2 {
+      color: #ddd;
+    }
+    body.dark-mode .info-section p {
+      color: #bbb;
+    }
+    body.dark-mode button {
+      background-color: #333;
+      color: #00e5e5;
+    }
+    body.dark-mode button:hover {
+      background-color: #00e5e5;
+      color: #000;
+    }
+    /* Settings Popup */
+    #settingsPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 1.5rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      z-index: 2000;
+      width: 320px;
+      border-radius: 10px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    #settingsPopup.show {
+      display: block !important;
+    }
+    #settingsPopup h2 {
+      margin-top: 0;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .form-control {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    #closePopup {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+    }
+    body.dark-mode #settingsPopup {
+      background: #2a2a2a;
+      color: #eee;
+    }
+    body.dark-mode #settingsPopup label {
+      color: #ccc;
+    }
+    body.dark-mode #closePopup {
+      color: #aaa;
+    }
+    /* Center Save Button */
+    #settingsPopup .save-btn {
+      display: block;
+      margin: 1rem auto 0 auto;
+      width: 120px;
+    }
+    /* Toggle Button Styles */
+    .toggle-btn {
+      background-color: #ddd;
+      color: #333;
+      border-radius: 20px;
+      padding: 0.4rem 1.2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: none;
+      border: none;
+      transition: background-color 0.3s, color 0.3s;
+      min-width: 60px;
+      text-align: center;
+    }
+    .toggle-btn.active {
+      background-color: #00b3b3;
+      color: white;
+    }
+    body.dark-mode .toggle-btn {
+      background-color: #555;
+      color: #ccc;
+    }
+    body.dark-mode .toggle-btn.active {
+      background-color: #00e5e5;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hamburger Menu -->
+  <div class="menu-icon" id="menuIcon">&#9776;</div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="nav-links">
+      <a href="home.html">Home</a>
+      <a href="livedetect.html">Live Detection</a>
+      <a href="learn.html">Learn Signs</a>
+      <a href="train.html">Train Gesture</a>
+      <a href="#" id="openPopupBtn">Settings</a>
+      <a href="about2.html">About</a>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header>
+      <h1>Welcome to Gesture Recognition System</h1>
+      <p>Experience real-time sign language recognition powered by AI and hand tracking.</p>
+      <a href="livedetect.html"><button>Get Started</button></a>
+    </header>
+
+    <div class="info-section">
+      <h2>About the Gesture Recognition System</h2>
+      <p>
+        Our Gesture Recognition System is designed to assist communication for people who are deaf or hard of hearing.
+        By leveraging real-time hand tracking technology, the system accurately detects gestures and converts them into spoken language.
+      </p>
+      <p>
+        The system uses state-of-the-art machine learning models to recognize sign language gestures. With a simple webcam setup,
+        users can communicate effectively using gestures, which are translated into voice output or text. It’s an intuitive and
+        user-friendly way to bridge communication gaps for the deaf and dumb community.
+      </p>
+      <p>
+        Explore our platform, learn different signs, train new gestures, and make use of live detection to assist in everyday communication.
+      </p>
+    </div>
+  </div>
+
+  <!-- Settings Popup -->
+  <div id="settingsPopup">
+    <span id="closePopup">&times;</span>
+    <h2>Settings</h2>
+
+    <div class="form-control">
+      <label for="darkModeToggle">Dark Mode:</label>
+      <button id="darkModeToggle" class="toggle-btn">OFF</button>
+    </div>
+
+    <div class="form-control">
+      <label for="audioEnabled">Enable Audio:</label>
+      <input type="checkbox" id="audioEnabled" />
+    </div>
+
+    <div class="form-control">
+      <label for="sensitivity">Sensitivity:</label>
+      <input type="range" id="sensitivity" min="1" max="10" />
+    </div>
+
+    <button class="save-btn" onclick="saveSettings()">Save</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuIcon = document.getElementById('menuIcon');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const popup = document.getElementById('settingsPopup');
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const audioEnabledCheckbox = document.getElementById('audioEnabled');
+      const sensitivityRange = document.getElementById('sensitivity');
+
+      // Hamburger menu toggle
+      menuIcon.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      });
+
+      // Close sidebar on overlay click
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+      });
+
+      // Open settings popup
+      document.getElementById('openPopupBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        fetchSettings();
+        popup.classList.add('show');
+      });
+
+      // Close settings popup
+      document.getElementById('closePopup').addEventListener('click', () => {
+        popup.classList.remove('show');
+      });
+
+      // Toggle dark mode button in popup
+      darkModeToggle.addEventListener('click', () => {
+        const isActive = darkModeToggle.classList.toggle('active');
+        darkModeToggle.textContent = isActive ? 'ON' : 'OFF';
+
+        document.body.classList.toggle('dark-mode', isActive);
+        document.documentElement.classList.toggle('dark-mode', isActive);
+      });
+
+      // Fetch settings from API or fallback
+      function fetchSettings() {
+        fetch('/api/settings')
+          .then(response => {
+            if (!response.ok) throw new Error("API unavailable");
+            return response.json();
+          })
+          .then(settings => {
+            applySettings(settings);
+            localStorage.setItem('settings', JSON.stringify(settings));
+          })
+          .catch(() => {
+            // Fallback localStorage or system
+            const localSettings = JSON.parse(localStorage.getItem('settings')) || {};
+            if (localSettings.hasOwnProperty('darkMode')) {
+              applySettings(localSettings);
+            } else {
+              const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+              applySettings({ darkMode: prefersDark, audioEnabled: true, sensitivity: 5 });
+            }
+          });
+      }
+
+      // Apply settings to UI
+      function applySettings(settings) {
+        const darkMode = settings.darkMode ?? false;
+        const audioEnabled = settings.audioEnabled ?? true;
+        const sensitivity = settings.sensitivity ?? 5;
+
+        if (darkMode) {
+          darkModeToggle.classList.add('active');
+          darkModeToggle.textContent = 'ON';
+        } else {
+          darkModeToggle.classList.remove('active');
+          darkModeToggle.textContent = 'OFF';
+        }
+
+        audioEnabledCheckbox.checked = audioEnabled;
+        sensitivityRange.value = sensitivity;
+
+        document.body.classList.toggle('dark-mode', darkMode);
+        document.documentElement.classList.toggle('dark-mode', darkMode);
+      }
+
+      // Save settings handler
+      window.saveSettings = function() {
+        const newSettings = {
+          darkMode: darkModeToggle.classList.contains('active'),
+          audioEnabled: audioEnabledCheckbox.checked,
+          sensitivity: Number(sensitivityRange.value)
+        };
+
+        // Save to localStorage
+        localStorage.setItem('settings', JSON.stringify(newSettings));
+
+        // TODO: Send to backend API if needed
+        /*
+        fetch('/api/settings', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(newSettings)
+        }).catch(() => {
+          // Optionally handle error here
+        });
+        */
+
+        alert('Settings saved!');
+        popup.classList.remove('show');
+      };
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learn Signs</title>
+  <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8f9fa;
+      --text-color: #000;
+      --card-bg: #fff;
+      --button-bg: #007bff;
+      --button-text: #fff;
+    }
+
+    body.dark-mode {
+      --bg-color: #121212;
+      --text-color: #f0f0f0;
+      --card-bg: #1e1e1e;
+      --button-bg: #0d6efd;
+      --button-text: #fff;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    header {
+      position: relative;
+      z-index: 1000;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--card-bg);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--text-color);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+    }
+
+    .hamburger span {
+      height: 3px;
+      width: 25px;
+      background-color: var(--text-color);
+      border-radius: 5px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-menu li a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-menu {
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background-color: var(--card-bg);
+        flex-direction: column;
+        width: 200px;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        padding: 1rem;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .nav-menu.active {
+        transform: translateX(0);
+      }
+    }
+
+    .container {
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .search-filter {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    input, select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .gesture-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .gesture-card {
+      width: 100%;
+      max-width: 220px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-color);
+    }
+
+    .gesture-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .gesture-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gesture-info {
+      padding: 0.75rem;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .gesture-info p {
+      margin: 0.5rem 0;
+    }
+
+    .play-btn {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hamburger Menu -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">Sign Learn</div>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="learn.html">Learn</a></li>
+        <li><a href="train.html">Custom</a></li>
+        <li><a href="about2.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>Gesture Library</h1>
+    <div class="search-filter">
+      <input type="text" id="searchInput" placeholder="Search gestures..." onkeyup="filterGestures()">
+      <select id="categorySelect" onchange="filterGestures()">
+        <option value="all">All Categories</option>
+        <option value="greetings">Greetings</option>
+        <option value="numbers">Numbers</option>
+        <option value="actions">Actions</option>
+        <option value="emotions">Emotions</option>
+        <option value="family">Family</option>
+      </select>
+    </div>
+    <div class="gesture-grid" id="gestureGrid">
+      <!-- Gesture Cards will be inserted here -->
+    </div>
+  </div>
+
+  <script>
+    const gestures = [
+      { name: "Hello", category: "greetings", meaning: "A common greeting", example: "Say hello to your friend", gif: "hello.jpg" },
+      { name: "Goodbye", category: "greetings", meaning: "Used to say farewell", example: "Goodbye, see you tomorrow", gif: "goodbye.jpg" },
+      { name: "Thank You", category: "greetings", meaning: "Used to express gratitude", example: "Thank you for your help", gif: "thankyou.jpg" },
+      { name: "Please", category: "greetings", meaning: "Used to make a polite request", example: "Please pass the salt", gif: "please.jpg" },
+      { name: "Sorry", category: "greetings", meaning: "Used to apologize", example: "I'm sorry for being late", gif: "sorry.jpg" },
+      { name: "One", category: "numbers", meaning: "Number one", example: "I have one apple", gif: "one.jpg" },
+      { name: "Two", category: "numbers", meaning: "Number two", example: "Two people came", gif: "two.jpg" },
+      { name: "Three", category: "numbers", meaning: "Number three", example: "There are three books", gif: "three.jpg" },
+      { name: "Four", category: "numbers", meaning: "Number four", example: "He has four dogs", gif: "four.jpg" },
+      { name: "Five", category: "numbers", meaning: "Number five", example: "Give me five minutes", gif: "five.jpg" },
+      { name: "Six", category: "numbers", meaning: "Number six", example: "She has six pencils", gif: "six.jpg" },
+      { name: "Seven", category: "numbers", meaning: "Number seven", example: "Seven birds flew away", gif: "seven.jpg" },
+      { name: "Eight", category: "numbers", meaning: "Number eight", example: "He bought eight oranges", gif: "eight.jpg" },
+      { name: "Nine", category: "numbers", meaning: "Number nine", example: "Nine students attended the class", gif: "14.jpg" },
+      { name: "Eat", category: "actions", meaning: "Gesture for eating", example: "Let's eat dinner", gif: "15.jpg" },
+      { name: "Drink", category: "actions", meaning: "Gesture for drinking", example: "Can I have a drink?", gif: "16.jpg" },
+      { name: "Sit", category: "actions", meaning: "Gesture for sitting", example: "Please sit down", gif: "17.jpg" },
+      { name: "Stand", category: "actions", meaning: "Gesture for standing", example: "Stand up straight", gif: "18.jpg" },
+      { name: "Walk", category: "actions", meaning: "Gesture for walking", example: "Let's go for a walk", gif: "19.jpg" },
+      { name: "Happy", category: "emotions", meaning: "Feeling of joy", example: "She is very happy today", gif: "20.jpg" },
+      { name: "Sad", category: "emotions", meaning: "Feeling of sorrow", example: "He felt sad after the movie", gif: "21.jpg" },
+      { name: "Angry", category: "emotions", meaning: "Feeling of anger", example: "She got angry at him", gif: "22.jpg" },
+      { name: "Love", category: "emotions", meaning: "Expression of affection", example: "I love my family", gif: "23.jpg" },
+      { name: "Scared", category: "emotions", meaning: "Feeling of fear", example: "He was scared of the dark", gif: "24.jpg" },
+      { name: "Mother", category: "family", meaning: "Gesture for mother", example: "My mother is kind", gif: "25.jpg" },
+      { name: "Father", category: "family", meaning: "Gesture for father", example: "His father is tall", gif: "26.jpg" },
+      { name: "Brother", category: "family", meaning: "Gesture for brother", example: "I have one brother", gif: "27.jpg" },
+      { name: "Sister", category: "family", meaning: "Gesture for sister", example: "My sister is younger than me", gif: "28.jpg" },
+      { name: "Family", category: "family", meaning: "Gesture representing whole family", example: "We are a happy family", gif: "29.jpg" }
+    ];
+
+    function escapeText(text) {
+      return text.replace(/'/g, "\\'");
+    }
+
+    function createGestureCard(gesture, index) {
+      const escapedExample = escapeText(gesture.example);
+      return `
+        <div class="gesture-card" data-category="${gesture.category}" data-name="${gesture.name.toLowerCase()}">
+          <img id="gif-${index}" src="${gesture.gif}" alt="${gesture.name}" />
+          <div class="gesture-info">
+            <h3>${gesture.name}</h3>
+            <p><strong>Meaning:</strong> ${gesture.meaning}</p>
+            <p><strong>Example:</strong> ${gesture.example}</p>
+            <button class="play-btn" onclick="playGesture('${escapedExample}', 'gif-${index}', '${gesture.gif}')">Play</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function loadGestures() {
+      const grid = document.getElementById('gestureGrid');
+      grid.innerHTML = gestures.map((gesture, index) => createGestureCard(gesture, index)).join('');
+    }
+
+    function filterGestures() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const category = document.getElementById('categorySelect').value;
+
+      const cards = document.querySelectorAll('.gesture-card');
+      cards.forEach(card => {
+        const name = card.dataset.name;
+        const cat = card.dataset.category;
+        const matchName = name.includes(query);
+        const matchCategory = category === 'all' || cat === category;
+
+        card.style.display = (matchName && matchCategory) ? 'block' : 'none';
+      });
+    }
+
+    function playGesture(text, gifId, gifSrc) {
+      responsiveVoice.speak(text, "US English Female");
+      const gif = document.getElementById(gifId);
+      gif.src = '';
+      setTimeout(() => { gif.src = gifSrc; }, 50);
+    }
+
+    function toggleMenu() {
+      document.getElementById("navMenu").classList.toggle("active");
+    }
+
+    window.onload = () => {
+      loadGestures();
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    };
+  </script>
+</body>
+</html>

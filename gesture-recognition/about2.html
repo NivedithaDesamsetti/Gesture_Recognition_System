@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About / Help</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f5f5f5;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .search-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .search-container input {
+      padding: 0.75rem 1rem;
+      width: 100%;
+      max-width: 500px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      background-color: white;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .collapsible {
+      background-color: white;
+      border: none;
+      cursor: pointer;
+      padding: 1.5rem;
+      width: 100%;
+      text-align: left;
+      outline: none;
+      font-size: 1.25rem;
+      font-weight: bold;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      color: #2980b9;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .active, .collapsible:hover {
+      background-color: #e0f7ff;
+    }
+    .content {
+      padding: 1rem 1.5rem;
+      display: none;
+      overflow: hidden;
+      background-color: white;
+      border-radius: 0 0 10px 10px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .section-box {
+      background: white;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    h2 {
+      color: #2980b9;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 1rem;
+    }
+    input, textarea {
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      background-color: white;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #219150;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: #eee;
+    }
+    body.dark-mode h1 {
+      color: #80cbc4;
+    }
+    body.dark-mode .search-container input {
+      background-color: #1e1e1e;
+      color: #eee;
+      border-color: #555;
+      box-shadow: none;
+    }
+    body.dark-mode .collapsible {
+      background-color: #1e1e1e;
+      color: #80cbc4;
+      box-shadow: none;
+      border: 1px solid #444;
+    }
+    body.dark-mode .active, body.dark-mode .collapsible:hover {
+      background-color: #37474f;
+    }
+    body.dark-mode .content {
+      background-color: #222;
+      color: #ddd;
+      box-shadow: none;
+      border: 1px solid #444;
+    }
+    body.dark-mode .section-box {
+      background-color: #222;
+      color: #ddd;
+      box-shadow: none;
+      border: 1px solid #444;
+    }
+    body.dark-mode h2 {
+      color: #80cbc4;
+    }
+    body.dark-mode input, 
+    body.dark-mode textarea {
+      background-color: #1e1e1e;
+      color: #eee;
+      border-color: #555;
+    }
+    body.dark-mode button {
+      background-color: #009688;
+    }
+    body.dark-mode button:hover {
+      background-color: #00796b;
+    }
+
+    /* Home button after form */
+    #homeBtn {
+      background-color: #2980b9;
+    }
+    #homeBtn:hover {
+      background-color: #1c5980;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>About / Help</h1>
+
+  <div class="search-container">
+    <input type="text" id="faqSearch" placeholder="Search questions..." oninput="filterFAQs()" />
+  </div>
+
+  <button class="collapsible" aria-expanded="false">What is MediaPipe?</button>
+  <div class="content">
+    <p>
+      MediaPipe is a framework developed by Google for building pipelines to process video, audio, and other multimedia.
+      It is widely used for real-time computer vision tasks such as hand tracking, face detection, and pose estimation.
+      In our app, we use MediaPipe Hands to track and interpret hand movements for sign language recognition.
+    </p>
+  </div>
+
+  <button class="collapsible" aria-expanded="false">How Gesture Recognition Works</button>
+  <div class="content">
+    <p>
+      Our app uses the MediaPipe Hands model to detect 21 key points on each hand in real time.
+      These points are analyzed to recognize predefined gestures. A gesture classification algorithm
+      maps these hand positions to specific sign language meanings, which are then translated into text and audio.
+    </p>
+  </div>
+
+  <button class="collapsible" aria-expanded="false">Accessibility Mission</button>
+  <div class="content">
+    <p>
+      We aim to break communication barriers by providing a real-time sign language interpreter for the deaf and hard-of-hearing community.
+      Our goal is to make technology more inclusive, enabling easier interaction through gesture recognition and speech synthesis.
+    </p>
+  </div>
+
+  <!-- Contact / Feedback Form -->
+  <div class="section-box">
+    <h2>Contact Us / Feedback</h2>
+    <p>If you have suggestions, bug reports, or just want to say hi, fill out the form below:</p>
+
+    <form id="feedbackForm" action="https://formsubmit.co/your-vaishnavibollam2005@gmail.com" method="POST" onsubmit="handleSubmit(event)">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Your Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="message">Your Message:</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <!-- Auto-response & Redirect -->
+      <input type="hidden" name="_autoresponse" value="Thank you for contacting us! We have received your message and will get back to you shortly.">
+      <input type="hidden" name="_next" value="https://example.com/thank-you.html">
+
+      <button type="submit">Send Feedback</button>
+    </form>
+
+    <!-- Home button shown after submit -->
+    <button id="homeBtn" style="display:none;" onclick="goHome()">Go to Home Page</button>
+  </div>
+
+  <script>
+    const collapsibles = document.querySelectorAll(".collapsible");
+
+    collapsibles.forEach(button => {
+      button.addEventListener("click", () => {
+        const content = button.nextElementSibling;
+        const expanded = button.classList.toggle("active");
+
+        button.setAttribute("aria-expanded", expanded);
+        content.style.display = expanded ? "block" : "none";
+      });
+    });
+
+    function filterFAQs() {
+      const input = document.getElementById('faqSearch').value.toLowerCase();
+      collapsibles.forEach(button => {
+        const text = button.textContent.toLowerCase();
+        const content = button.nextElementSibling;
+        if (text.includes(input)) {
+          button.style.display = 'block';
+          content.style.display = button.classList.contains('active') ? 'block' : 'none';
+        } else {
+          button.style.display = 'none';
+          content.style.display = 'none';
+        }
+      });
+    }
+
+    document.getElementById('faqSearch').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = this.value.toLowerCase();
+        let matchFound = false;
+
+        collapsibles.forEach(button => {
+          const content = button.nextElementSibling;
+          const text = button.textContent.toLowerCase();
+
+          button.style.display = "none";
+          button.classList.remove("active");
+          content.style.display = "none";
+          button.setAttribute("aria-expanded", false);
+
+          if (!matchFound && text.includes(query)) {
+            button.style.display = "block";
+            button.classList.add("active");
+            content.style.display = "block";
+            button.setAttribute("aria-expanded", true);
+            matchFound = true;
+          }
+        });
+
+        if (!matchFound) {
+          alert("No matching FAQ found.");
+        }
+      }
+    });
+
+    // Dark mode based on user setting stored in localStorage (not system preference)
+    function applyDarkModeSetting() {
+      if (localStorage.getItem('darkmode') === 'true') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+
+    // Run on load
+    applyDarkModeSetting();
+
+    // Handle form submit to show home button (simulate success, actual redirect happens by formsubmit)
+    function handleSubmit(event) {
+      // Show the home button after submit
+      // Note: The form will redirect by itself, so this works if you handle form via AJAX or prevent default.
+      // Here we let the form submit normally but still show the button for demo purposes.
+      setTimeout(() => {
+        document.getElementById('homeBtn').style.display = 'inline-block';
+      }, 100);
+    }
+
+    // Navigate to home page
+    function goHome() {
+      window.location.href = '/';  // Change '/' to your actual home URL if different
+    }
+  </script>
+
+</body>
+</html>
